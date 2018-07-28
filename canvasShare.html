@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    canvas {
+      border: solid 1px #000;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas"></canvas>
+  <script>
+    class Sence {
+      constructor(id, options = {
+        width: 600,
+        height: 400
+      }) {
+        this.canvas = document.querySelector('#' + id)
+        this.width = options.width
+        this.height = options.height
+        this.canvas.width = options.width
+        this.canvas.height = options.height
+        this.ctx = this.canvas.getContext('2d')
+        // 离屏canvas
+        this.outCanvas = document.createElement('canvas')
+        this.outCanvas.width = this.width
+        this.outCanvas.height = this.height
+        this.outCtx = this.outCanvas.getContext('2d')
+        // 画布状态
+        this.stateList = {
+          drawing: 'drawing',
+          moving: 'moving'
+        }
+        this.state = this.stateList.drawing
+        // 鼠标状态
+        this.mouseState = {
+
+          offsetX: 0,
+          offsetY: 0,
+          down: false,
+          target: null
+        }
+        // 绘图相关
+        this.currentSpriteConstructor = null
+        // 存储精灵
+        let sprites = []
+        this.sprites = sprites
+        // 监听事件
+        this.canvas.addEventListener('contextmenu', (e) => {
+          console.log(e)
+        })
+        this.canvas.addEventListener('mousedown', (e) => {
+			console.log(e)
+          if (e.button === 0) {
+            let x = e.offsetX
+            let y = e.offsetY
+            this.mouseState.down = true
+            let target = null
+            if (this.state === this.stateList.drawing) {
+              if (this.currentSpriteConstructor) {
+                target = new this.currentSpriteConstructor(x, y)
+              }
+              // 创建一个临时target
+            } else if (this.state === this.stateList.moving) {
+              let sprites = this.sprites
+              for (let i = sprites.length - 1; i >= 0; i--) {
+                if (sprites[i].choose(x, y)) {
+                  target = sprites[i]
+                  break;
+                }
+              }
+              if (target) {
+                let offset = target.getOffset(x, y)
+                this.mouseState.offsetX = offset.x
+                this.mouseState.offsetY = offset.y
+              }
+            }	
+            this.mouseState.target = target
+            // 离屏canvas保存不移动目标
+            let ctx = this.outCtx
+            ctx.clearRect(0, 0, this.width, this.height)
+            this.sprites.forEach(item => {
+              if (item !== target) {
+                item.draw(ctx)
+              }
+            })
+			if(target){
+            // 开始动画
+            this.anmite()
+			}
+          }
+        })
+        this.canvas.addEventListener('mousemove', (e) => {
+          let x = e.offsetX
+          let y = e.offsetY
+          if (this.mouseState.down && this.mouseState.target) {
+            if (this.state === this.stateList.drawing) {
+              this.mouseState.target.resize(x, y)
+            } else if (this.state === this.stateList.moving) {
+              let {
+                offsetX, offsetY
+              } = this.mouseState
+              this.mouseState.target.moveTo(x - offsetX, y - offsetY)
+            }
+          }
+        })
+        document.body.addEventListener('mouseup', (e) => {
+          if (this.mouseState.down) {
+            this.mouseState.down = false
+            if (this.state === this.stateList.drawing) {
+              if (this.mouseState.target.validate()) {
+                this.sprites.push(this.mouseState.target)
+              }
+            } else if (this.state === this.stateList.moving) {
+            }
+          }
+        })
+      }
+      anmite() {
+        requestAnimationFrame(() => {
+		  this.clear()
+		  this.paint(this.outCanvas)
+		  this.mouseState.target.draw(this.ctx)
+          if (this.mouseState.down) {
+            this.anmite()
+          }
+        })
+      }
+      append(sprite) {
+        this.sprites.push(sprite)
+        sprite.draw(this.ctx)
+      }
+      remove(id) {
+        this.sprites.splice(id, 1)
+      }
+      clear() {
+        this.ctx.clearRect(0, 0, this.width, this.height)
+      }
+      reset() {
+        this.clear()
+        this.sprites.forEach(element => {
+          element.draw(this.ctx)
+        })
+      }
+      paint(canvas, x = 0, y = 0) {
+        this.ctx.drawImage(canvas, x, y, this.width, this.height)
+      }
+      setCurrentSprite(Element) {
+        this.currentSpriteConstructor = Element
+      }
+    }
+    class Element {
+      constructor(options = {
+        fillStyle: 'rgba(0,0,0,0)',
+        lineWidth: 5,
+        strokeStyle: 'rgba(0,0,0,255)'
+      }) {
+        this.options = options
+      }
+	  setStyle(options){
+        this.options = Object.assign(this.options. options)
+	  }
+    }
+    class Circle extends Element {
+      constructor(x, y, r = 0, options) {
+        super(options)
+        this.x = x
+        this.y = y
+        this.r = r
+      }
+      resize(x, y) {
+        this.r = Math.sqrt((this.x - x) ** 2 + (this.y - y) ** 2)
+      }
+      move(x, y) {
+        this.x += x
+        this.y += y
+      }
+      moveTo(x, y) {
+        this.x = x
+        this.y = y
+      }
+      choose(x, y) {
+        return ((x - this.x) ** 2 + (y - this.y) ** 2) < (this.r ** 2)
+      }
+      getOffset(x, y) {
+        return {
+          x: x - this.x,
+          y: y - this.y
+        }
+      }
+      draw(ctx) {
+        let {
+          fillStyle,
+          strokeStyle,
+          lineWidth
+        } = this.options
+        ctx.beginPath()
+        ctx.fillStyle = fillStyle
+        ctx.strokeStyle = strokeStyle
+        ctx.lineWidth = lineWidth
+        ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI)
+        ctx.stroke()
+        ctx.fill()
+      }
+      validate() {
+        return this.r >= 3
+      }
+    }
+	class Rect extends Element {
+      constructor(x, y, width = 0, height = 0, options) {
+        super(options)
+        this.x = x
+        this.y = y
+        this.w = width
+		this.h = height
+      }
+	  resize(x, y){
+		  this.w = (x - this.x)
+		  this.h = (y - this.y)
+	  }
+	  moveTo(x, y){
+		  this.x = x
+		  this.y = y
+	  }
+	  choose(x, y){
+		  let hW = this.w / 2
+		  let hH = this.h / 2
+		  let middleX = this.x + hW
+		  let middleY = this.y + hH
+		  return (Math.floor(x - middleX) < Math.floor(hW)) && (Math.floor(y - middleY) < Math.floor(hH))
+	  }
+	  getOffset(x, y){
+        return {
+          x: x - this.x,
+          y: y - this.y
+        }
+	  }
+      draw(ctx) {
+        let {
+          fillStyle,
+          strokeStyle,
+          lineWidth
+        } = this.options
+        ctx.beginPath()
+        ctx.fillStyle = fillStyle
+        ctx.strokeStyle = strokeStyle
+        ctx.lineWidth = lineWidth
+        ctx.rect(this.x, this.y, this.w, this.h)
+        ctx.stroke()
+        ctx.fill()
+      }
+      validate() {
+        return this.w >= 3 && this.h >= 3
+      }
+	}
+    let sence = new Sence('canvas')
+    sence.setCurrentSprite(Rect)
+  </script>
+</body>
+
+</html>

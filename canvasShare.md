@@ -227,10 +227,6 @@ class Sence {
     height: 400
   }) {
   /* ... */
-  // 监听事件
-    this.canvas.addEventListener('contextmenu', (e) => {
-      console.log(e)
-    })
     // 鼠标按下时的处理逻辑
     this.canvas.addEventListener('mousedown', (e) => {
     // 只有左键按下时才会处理鼠标事件

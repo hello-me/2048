@@ -331,25 +331,9 @@ class Sence {
       }
     })
   }
-  // 可以将手动的创建的精灵添加到画布中
-  append(sprite) {
-    this.sprites.push(sprite)
-    sprite.draw(this.ctx)
-  }
-  // 根据ID值，从场景中删除对应元素
-  remove(id) {
-    this.sprites.splice(id, 1)
-  }
   // clearRect清除指定区域的画布内容
   clear() {
     this.ctx.clearRect(0, 0, this.width, this.height)
-  }
-  // 重绘整个画布的内容
-  reset() {
-    this.clear()
-    this.sprites.forEach(element => {
-      element.draw(this.ctx)
-    })
   }
   // 将离屏canvas绘制到页面的canvas画布上
   paint(canvas, x = 0, y = 0) {

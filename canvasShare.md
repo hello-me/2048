@@ -59,7 +59,7 @@ let outCtx = outCanvas.getContext('2d')
 ```javascript
 // 获取页面上的canvas元素
 let canvas = docuemnt.querySelector('#canvas')
-let ctx = cnavas.getContext('2d')
+let ctx = canvas.getContext('2d')
 // 将离屏canvas绘制到页面的canvas画布上
 ctx.drawImage(outCanvas, 0, 0, width, height)
 ```

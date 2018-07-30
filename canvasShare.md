@@ -315,6 +315,7 @@ class Sence {
 3. 方法介绍
 ```javascript
 class Sence {
+ /* ... */
 // 动画
   anmite() {
     requestAnimationFrame(() => {

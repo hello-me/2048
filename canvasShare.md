@@ -222,6 +222,7 @@ class Sence {
 }
 ```
 2. 事件逻辑
+事件处理流程: 鼠标按下->鼠标移动->鼠标松开
 ```javascript
 class Sence {
   constructor(id, options = {
@@ -230,9 +231,6 @@ class Sence {
   }) {
   /* ... */
   // 监听事件
-    this.canvas.addEventListener('contextmenu', (e) => {
-      console.log(e)
-    })
     // 鼠标按下时的处理逻辑
     this.canvas.addEventListener('mousedown', (e) => {
     // 只有左键按下时才会处理鼠标事件

@@ -366,9 +366,3 @@ class Scene {
   }
 }
 ```
-## 最后
-```
- let scene = new Scene('canvas')
-    scene.setCurrentSprite(Circle)
-```
-

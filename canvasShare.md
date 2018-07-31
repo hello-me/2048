@@ -139,7 +139,7 @@ class Circle extends Element {
       strokeStyle,
       lineWidth
     } = this.options
-    // 开始绘制
+    // 开始绘制beginPath() 方法开始一条路径，或重置当前的路径
     ctx.beginPath()
     // 设置属性
     ctx.fillStyle = fillStyle

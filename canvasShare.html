@@ -24,7 +24,7 @@
     图形：
     <select name="shape" id="shape">
       <option value="Line" selected>线</option>
-      <option value="Circle">圆</option>
+      <option value="Circle" selected>圆</option>
       <option value="Rect">矩形</option>
     </select>
     线条宽度(1-20)：
@@ -392,7 +392,7 @@
       }
     }
     let scene = new Scene('canvas')
-    scene.setCurrentSprite(Circle)
+    scene.setCurrentSprite(Line)
   </script>
   <script>
     let stateEl = document.querySelector('#state')

@@ -180,7 +180,7 @@ arc() 方法创建弧/曲线（用于创建圆或部分圆）
 ### scene场景的实现
 1. 属性介绍
 ```javascript
-class Sence {
+class Scene {
   constructor(id, options = {
     width: 600,
     height: 400
@@ -224,7 +224,7 @@ class Sence {
 2. 事件逻辑
 事件处理流程: 鼠标按下->鼠标移动->鼠标松开
 ```javascript
-class Sence {
+class Scene {
   constructor(id, options = {
     width: 600,
     height: 400
@@ -320,7 +320,7 @@ class Sence {
 ```
 3. 方法介绍
 ```javascript
-class Sence {
+class Scene {
 // 动画
   anmite() {
     requestAnimationFrame(() => {
@@ -365,5 +365,10 @@ class Sence {
     this.currentSpriteConstructor = Element
   }
 }
+```
+## 最后
+```
+ let scene = new Scene('canvas')
+    scene.setCurrentSprite(Circle)
 ```
 

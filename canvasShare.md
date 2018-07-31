@@ -56,6 +56,7 @@ let outCtx = outCanvas.getContext('2d')
 - y	在画布上放置图像的 y 坐标位置。
 - width	可选。要使用的图像的宽度。（伸展或缩小图像）
 - height	可选。要使用的图像的高度。（伸展或缩小图像）
+
 示例代码
 ```javascript
 // 获取页面上的canvas元素
